@@ -1,0 +1,215 @@
+<div class="row " style="    min-height: 650px;" *ngIf="pedidoEmpleadoDetalles.length>0">
+  <!-- Column -->
+  <div class="col-xl-8  col-lg-9  col-md-12  col-sm-12 col-xs-12">
+    <div class="card">
+      <div class="card-header bg-success">
+        <h5 class="mb-0 text-white">Tu Carrito ({{pedidoEmpleadoDetalles.length}} articulos)</h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table product-overview">
+            <thead>
+              <tr>
+                <th class="text-center">Imagen</th>
+                <th>Articulo</th>
+                <th>Precio</th>
+                <th>Cant.</th>
+                <th style="text-align: center">ITBIS</th>
+                <th style="text-align: center">Sub Total</th>
+                <th style="text-align: center">Total</th>
+                <th style="text-align: center">Accion</th>
+              </tr>
+            </thead>
+            <tbody >
+              <tr *ngFor="let item of pedidoEmpleadoDetalles">
+                <td width="150" class="text-center"   *ngIf="item.imagenUrl">
+                  <img [src]="item.imagenUrl"   width="80">
+                </td>
+                <td  width="150" class="text-center" *ngIf="!item.imagenUrl">
+
+                  <i *ngIf="!item.imagenUrl" style="font-size: 40px;" class="fa fa-file-image text-black-50 icon_articulo"></i>
+                </td>
+                <td width="550">
+                  <h5 class="font-500">{{item.codigoReferencia}} | {{item.nombre}}	</h5>
+                </td>
+                <td>{{item.precio}}</td>
+                <td width="70">
+                  <input type="number" class="form-control"  [(ngModel)]="item.cantidad" placeholder="1" (keyup)="changeCant(item)">
+                </td>
+                <td width="150" align="center" class="font-500">
+                  {{item.totalImpuesto | number : '1.0-2' }}
+                </td>
+                <td width="150" align="center" class="font-500">
+                  {{item.subtotal | number : '1.0-2' }}
+                </td>
+                <td width="150" align="center" class="font-500">
+                  {{item.totalNeto  | number : '1.0-2' }}
+                </td>
+                <td align="center">
+                  <a href="javascript:void(0)" class="text-inverse" (click)="removeArtFromCart(item)" title="" data-bs-toggle="tooltip" data-original-title="Delete" data-bs-original-title="">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 fill-white feather-sm text-dark">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      <line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                  </a>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Column -->
+  <div class="   col-xl-4  col-lg-3 col-md-12   col-sm-12 col-xs-12" >
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Resumen del carrito</h5>
+        <hr>
+        <div class=" col-md-12 text-center bottom_1 p-3 " style="background-color:#F0F3F4; bottom:0;" >
+          <div class="label_info_factura" style=" border-bottom:2px dotted rgb(143, 143, 143);">
+            <div class="d-flex justify-content-between "  style="margin-bottom: -7px;  ">
+              <div class="label_info">
+                <h6>ITBIS</h6>
+              </div>
+              <div class="label_info_valor">
+                <h5  >{{pedidoEmpleado.impuestoTotal |  currency}}</h5>
+              </div>
+           </div>
+          </div>
+          <div class="label_info_factura  mt-2" style=" border-bottom:2px dotted rgb(143, 143, 143);">
+            <div class="d-flex justify-content-between "  style="margin-bottom: -7px;  ">
+              <div class="label_info">
+                <h6>DESC.</h6>
+              </div>
+              <div class="label_info_valor">
+                <h5  >{{0 |  currency}}</h5>
+              </div>
+           </div>
+          </div>
+          <div class="label_info_factura  mt-2"  style="     border-bottom:2px dotted rgb(143, 143, 143) ;  ">
+            <div class="d-flex justify-content-between " style="margin-bottom: -7px; " >
+              <div class="label_info">
+                <h6>SUB TOTAL</h6>
+              </div>
+              <div class="label_info_valor">
+                <h5 >{{pedidoEmpleado.subtotal |  currency}}</h5>
+              </div>
+           </div>
+          </div>
+          <div class="label_info_factura mt-2"  style="     border-bottom:2px dotted rgb(143, 143, 143) ;  ">
+            <div class="d-flex justify-content-between " style="margin-bottom: -7px; " >
+              <div class="label_info ">
+                <h4 class="font-weight-bold ">TOTAL</h4>
+              </div>
+              <div class="label_info_valor">
+                <h4 class="font-weight-bold ">{{pedidoEmpleado.totalNeto |  currency}}</h4>
+              </div>
+           </div>
+          </div>
+        <!-- <button  type="button" class="btn btn-success w-100  mt-3">
+          <div class="d-flex justify-content-between mt-1 p-1" >
+            <div class="text-button_cobrar">
+              <h4 class=" text-white font-weight-bold">Facturar</h4>
+            </div>
+            <div class="valor_total">
+              <h4 class="text-white font-weight-bold" >{{5000 |  currency}}</h4>
+            </div>
+         </div>
+        </button> -->
+
+       </div>
+        <hr>
+        <button class="btn btn-success  w-100 mb-2 btn-radius font-weight-bold " (click)="openConfirmPedidoModal(contentConfirmPedido)" >
+         Confirmar
+        </button>
+        <button class="btn btn-secondary w-100  btn-outline btn-radius font-weight-bold"  >Cancelar</button>
+      </div>
+    </div>
+    <!-- <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">For Any Support</h5>
+        <hr>
+        <h4>
+          <i class="ri-cellphone-line"></i> 9998979695 (Toll Free)
+        </h4>
+        <small>Please contact with us if you have any questions. We are
+          avalible 24h.</small>
+      </div>
+    </div> -->
+  </div>
+</div>
+
+<div class="row " style="    min-height: 650px;" *ngIf="pedidoEmpleadoDetalles.length<=0">
+  <!-- Column -->
+  <div class="col-xl-12  col-lg-12  col-md-12  col-sm-12 col-xs-12">
+    <div class="card">
+      <div class="card-header bg-white">
+        <h4 class="mb-0 text-black-50 font-weight-bold"> CARRITO </h4>
+      </div>
+      <div class="card-body">
+         <div class=" text-center">
+           <div class="icono_cart_empty mt-2" >
+             <svg xmlns="http://www.w3.org/2000/svg" style="color:#d3d3d3;"
+                width="75" height="75" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-shopping-cart fill-white feather-sm">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+           </div>
+
+           <div class="texto_cart_empty mt-3   w-100" style="text-align: -webkit-center; text-align: -moz-center;">
+              <h3 class="font-weight-bold" >TU CARRITO ESTÁ AHORA MISMO VACÍO</h3>
+                <p class="w-75 text-black-50 font-weight-bold" >¿Aún no te has decidido?. Tenemos productos que te encantarán,
+                  revisa nuestro <span class="text-success">catalogo </span>  yendo a la  <span class="text-success"> página de la tienda</span> para comprobarlo.
+                </p>
+
+
+           </div>
+         </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<ng-template #contentConfirmPedido let-modal>
+  <div class="modal-header border-0">
+    <h4 class="modal-title text-success font-weight-bold">Confirmación de pedido</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body  mt-1">
+    <h4></h4>
+    <ul class="list-group">
+
+      <li class="list-group-item d-flex font-weight-bold  justify-content-between align-items-center">
+         Condicion de pago
+        <span class="badge  bg-light text-dark  font-weight-bold   rounded-pill">{{clienteInfo.condicionPago}}</span>
+      </li>
+      <li class="list-group-item   font-weight-bold   d-flex justify-content-between align-items-center">
+        Plazo
+        <span class="badge  bg-light text-dark  font-weight-bold  rounded-pill">{{clienteInfo.plazo}} </span>
+      </li>
+      <li class="list-group-item  font-weight-bold   d-flex justify-content-between align-items-center">
+        Total de pedido
+        <span class="badge  bg-light text-dark font-weight-bold  rounded-pill">{{pedidoEmpleado.totalNeto |  currency}}</span>
+      </li>
+    </ul>
+  </div>
+  <div class="modal-footer mt-3  border-0">
+    <button type="button" style="border-radius: 5px;" class="btn btn-secondary" (click)="closeConfirmPedidoModal()">Cerrar</button>
+    <button type="button" style="border-radius: 5px;" class="btn btn-success" (click)="onSubmit()">Facturar pedido</button>
+
+  </div>
+</ng-template>
