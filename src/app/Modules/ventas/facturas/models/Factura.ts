@@ -1,27 +1,77 @@
-export interface Factura {
-    id: number;
-    sucursalId: number;
-    condicionPagoId: number;
+export class Factura {
+    constructor() {
+        this.id = 0;
+        this.sucursalId = 0;
+        this.condicionPagoId = 0;
+        this.almacenId=null;
+        this.codigoReferencia = "";
+        this.clienteId = null;
+        this.direccion="";
+        this.fechaCreacion = new Date();
+        this.fechaEntrega = new Date();
+        this.vendedorId = null;
+        this.plazoId = 0;
+        this.costoTotal = 0;
+        this.subtotal = 0;
+        this.descuentoTotal = 0;
+        this.impuestoTotal = 0;
+        this.totalNeto = 0;
+        this.monedaId = 0;
+        this.tasa = 0;
+        this.estadoId = 0;
+        this.usuarioId = 0;
+        this.listaPrecioID = 0;
+        this.estadoAutorizacionID = 0;
+        this.clientePlazo = 0;
+        this.companiaId=0;
+        this.estadoERPID = 1;
+        this.diasVencimiento=0;
+        this.nombreCliente="";
+        this.documento="";
+        this.telefono="";
+        this.estado="Borrador";
+        this.enviado=false;
+        this.aprobado=false;
+        this.pagado=false;
+        this.entregado=false;
+    }
+
+    id = 0;
+    sucursalId = 0;
+    condicionPagoId = 0;
+    almacenId:number;
     codigoReferencia: string;
-    clienteId: number;
-    fechaCreacion: string;
-    vendedorId: number;
-    plazoId: number;
-    costoTotal: number;
-    subtotal: number;
-    descuento: number;
-    impuesto: number;
-    total: number;
-    monedaId: number;
-    tasa: number;
-    estadoId: number;
-    usuarioId: number;
-    listaPrecioID: number;
-    entregada: number;
+    clienteId = 0;
+    direccion:string;
+    fechaCreacion: Date;
     fechaEntrega: Date;
-    usuarioEntregaId: number;
-    pagos: number;
-    fechaVencimiento: Date;
-    diasVencimiento: number;
-    codigoDocNum: string;
+    vendedorId = 0;
+    plazoId = 0;
+    costoTotal = 0;
+    subtotal = 0;
+    descuentoTotal = 0;
+    impuestoTotal = 0;
+    totalNeto = 0;
+    monedaId = 0;
+    tasa = 0;
+    estadoId = 0;
+    usuarioId = 0;
+    listaPrecioID = 0;
+    estadoAutorizacionID = 0;
+    estadoERPID = 1;
+    estadoDespachoID = 0;
+    clientePlazo = 0;
+    companiaId:number;
+    diasVencimiento:any;
+    nombreCliente:string;
+    documento:string;
+    telefono:string;
+    estado:string;
+    enviado:boolean;
+    aprobado:boolean;
+    pagado:boolean;
+    entregado:boolean;
+
+   
+
 }

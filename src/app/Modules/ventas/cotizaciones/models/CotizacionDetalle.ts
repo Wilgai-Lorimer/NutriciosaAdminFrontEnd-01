@@ -1,4 +1,5 @@
 export interface CotizacionDetalle {
+    articulo: any;
     id: number;
     cotizacionId: number;
     articuloId: number;
@@ -23,6 +24,4 @@ export interface CotizacionDetalle {
     nombre:string;
     descuentoAutorizado:boolean;
     linea:number;
-   
-   
 }

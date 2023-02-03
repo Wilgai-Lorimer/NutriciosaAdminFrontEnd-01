@@ -1,4 +1,6 @@
 export class Cotizacion {
+    nombreCliente: any;
+    telefono: any;
     constructor() {
         this.id = 0;
         this.sucursalId = 0;

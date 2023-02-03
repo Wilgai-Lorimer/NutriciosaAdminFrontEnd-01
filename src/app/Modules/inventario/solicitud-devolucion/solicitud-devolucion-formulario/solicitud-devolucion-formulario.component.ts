@@ -277,8 +277,6 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
      this.encabezadoFactura[0].impuestoTotal=this.solicitudDevolucionDetalle.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalImpuesto})=> n+totalImpuesto,0);
      this.encabezadoFactura[0].descuentoTotal=this.solicitudDevolucionDetalle.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalDescuento})=> n+totalDescuento,0)
      this.encabezadoFactura[0].totalNeto=this.solicitudDevolucionDetalle.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalNeto})=> n+totalNeto,0)
-  
-
      let parametro: any = {
       "SolicitudDevolucion": this.encabezadoFactura[0],
       "SolicitudDevolucionDetalle": this.solicitudDevolucionDetalle.filter(x => x.destalleFacturaSelecionada == true ),

@@ -1,4 +1,4 @@
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -9,12 +9,14 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { ArticuloBalanceViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloBalanceViewModel';
 import { ArticuloListaPrecioViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloListaPrecioViewModel';
 import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
+import { Compania } from 'src/app/Modules/mantenimientos/companias/models/Compania';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox, ComboBoxAlmacenCotizacion } from 'src/app/shared/model/ComboBox';
 import { Cotizacion } from '../models/Cotizacion';
 import { CotizacionDetalle } from '../models/CotizacionDetalle';
+import { ImprimirCotizacion } from '../print/imprimirCotizacion';
 @Component({
   selector: 'app-cotizaciones-formulario',
   templateUrl: './cotizaciones-formulario.component.html',
@@ -63,6 +65,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   searchProducto: any="";
   loadingEstadoCotizacion: boolean;
   estadosCotizaciones: ComboBox[];
+  compania: Compania;
 
   constructor(
     private toastService: ToastrService,
@@ -71,6 +74,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     private route: ActivatedRoute,
     private modalService: NgbModal,
     private authService: AuthenticationService,
+    private imprimirCotizacion: ImprimirCotizacion,
   ) { }
 
 
@@ -79,6 +83,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     if (id > 0) {
       this.getCotizacion(id);
       this.actualizando = true;
+      this.getDatosCompania();
     }
     this.GetAutorizacionDescuento(Number(this.authService.tokenDecoded.nameid));
     this.getAlmacenes();
@@ -222,7 +227,7 @@ export class CotizacionesFormularioComponent implements OnInit {
       porcientoDescuento: undefined, precio: 0,
       subtotal: 0, totalDescuento: 0, totalImpuesto: 0, totalNeto: 0,codigoReferenciaArticulo:"",
       inventario:0,hayErroresCantidad:false, hayErroresPorcientoDescuento:false,companiaId:0,
-      porcientoImpuesto:0,porcientoDescuentoSol:0,estadoAutorizadoId:0,nombre:"",porcientoDescuentoBase:0,descuentoAutorizado:false,linea:0
+      porcientoImpuesto:0,porcientoDescuentoSol:0,estadoAutorizadoId:0,nombre:"",porcientoDescuentoBase:0,descuentoAutorizado:false,linea:0,articulo:""
     })
   }
   
@@ -741,6 +746,27 @@ export class CotizacionesFormularioComponent implements OnInit {
         }, 1000);
 
       });
+  }
+  getDatosCompania() {
+    this.httpService.DoPostAny<Compania>(DataApi.Compania,
+      "GetCompaniaByID", Number(this.authService.tokenDecoded.primarygroupsid)).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          if (response != null && response.records != null && response.records.length > 0) {
+            let record = response.records[0]
+            this.compania = record;
+          } else {
+            this.toastService.warning("No se pudo conseguir los datos de la compania.");
+          }
+        }
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+  imprimir(){
+    this.imprimirCotizacion.construirFactura(this.cotizacion,this.cotizacionDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0),this.compania)
   }
 }
 

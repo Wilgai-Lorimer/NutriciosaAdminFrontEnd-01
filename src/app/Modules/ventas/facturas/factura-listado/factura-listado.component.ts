@@ -18,8 +18,6 @@ import { CotizacionListadoViewModel } from '../../cotizaciones/models/Cotizacion
   styleUrls: ['./factura-listado.component.scss']
 })
 export class FacturaListadoComponent implements OnInit {
-
-
   // COPIAR AL CREAR UN LISTADO NUEVO
   Search: string = "";
   paginaNumeroActual = 1;
@@ -32,7 +30,6 @@ export class FacturaListadoComponent implements OnInit {
   estadoERPID:any;
   fecha= new Date()
   vendedor:any;
-  
   cotizacionDetalles: CotizacionDetalleViewModel[];
   loadingCotizacionDetalle: boolean;
   estados: ComboBox[] = []
@@ -43,15 +40,12 @@ export class FacturaListadoComponent implements OnInit {
   loadingEstadosERP: boolean;
   vendedores: ComboBox[];
   estadoERPs: ComboBox[];
-
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private modalService: NgbModal,
     private authService: AuthenticationService,
     public permissionsService: NgxPermissionsService,
   ) { }
-
-
   ngOnInit(): void {
     this.getData()
     this.getEstados()
@@ -80,7 +74,6 @@ export class FacturaListadoComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
         this.Cargando = false;
       });
-
   }
   getDataFiltrado() {
     this.Cargando = true;
@@ -90,9 +83,7 @@ export class FacturaListadoComponent implements OnInit {
       { key: "vendedorID", value: this.vendedor },
       { key: "estadoERPID", value: this.estadoERPID }
   ]
-  console.log(parametros)
-
-    this.httpService.GetAllWithPagination<CotizacionListadoViewModel>(DataApi.Cotizacion, "GetCotizacionListadoFiltrado", "ID", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<CotizacionListadoViewModel>(DataApi.Cotizacion, "GetFacturaListadoFiltrado", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
@@ -110,10 +101,7 @@ export class FacturaListadoComponent implements OnInit {
       });
 
   }
-
-
   asignarPagination(x: ResponseContenido<any>) {
-
     if (x.pagina != null) {
       this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
       this.paginaTotalRecords = x.pagina.totalRecords == null ? 0 : x.pagina.totalRecords;
@@ -123,39 +111,30 @@ export class FacturaListadoComponent implements OnInit {
       this.paginaTotalRecords = 0;
       this.paginaSize = 0;
     }
-
   }
-
-
   openModalMapaRelacion(modal: any): void {
     this.modalService.open(modal, { size: 'xl', centered: true })
   }
-
-
   openModal(content, cotizacion: CotizacionListadoViewModel) {
     this.cotizacionDetalles = [];
-    this.getCotizacionDetalle(cotizacion.id);
+    this.getFacturaDetalles(cotizacion.id);
     this.cotizacionSeleccionada = cotizacion;
     this.modalService.open(content, { windowClass: "myCustomModalClass", });
   }
-
   openModalAutorizar(content, cotizacion: CotizacionListadoViewModel) {
     this.cotizacionDetalles = [];
-    this.getCotizacionDetalle(cotizacion.id);
+    this.getFacturaDetalles(cotizacion.id);
     this.cotizacionSeleccionada = cotizacion;
     this.modalService.open(content, { size: 'xl', });
   }
-
-  getCotizacionDetalle(cotizacionID: number) {
+  getFacturaDetalles(cotizacionID: number) {
     this.loadingCotizacionDetalle = true;
-    this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
-      "GetCotizacionDetalles", cotizacionID).subscribe(response => {
-
+    this.httpService.DoPostAny<any>(DataApi.Factura,
+      "GetFacturaDetalles", cotizacionID).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.cotizacionDetalles = response.records;
-          console.log(this.cotizacionDetalles)
         }
         this.loadingCotizacionDetalle = false;
       }, error => {
@@ -163,12 +142,10 @@ export class FacturaListadoComponent implements OnInit {
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
   }
-
   CambiarEstadoAutorizacionCotizacion(cotizacionID: number) {
     this.loadingEstadoAutorizacionCotizacion = true;
     this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
       "CambiarEstadoAutorizacionCotizacion", cotizacionID).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -182,8 +159,6 @@ export class FacturaListadoComponent implements OnInit {
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
   }
-
-
   getEstados() {
     this.loadingEstados = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -198,20 +173,16 @@ export class FacturaListadoComponent implements OnInit {
       }, error => {
         this.loadingEstados = false;
         this.toastService.error("No se pudo obtener los estados", "Error conexion al servidor");
-
         setTimeout(() => {
           this.getEstados();
         }, 1000);
-
       });
   }
 
 
   onChangeEstado(cotizacion: CotizacionListadoViewModel, index: number) {
-
     this.httpService.DoPostAny<ComboBox>(DataApi.Cotizacion,
       "UpdateCotizacionEstado", cotizacion).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
           console.error(response.errores[0]);
@@ -222,8 +193,6 @@ export class FacturaListadoComponent implements OnInit {
         //this.getData()
         this.toastService.error("No se actualizar el estado", "Error conexion al servidor");
       });
-
-
   }
 
   onChangeFecha(fecha:any){
@@ -242,12 +211,10 @@ export class FacturaListadoComponent implements OnInit {
   onChangeEstadoERP(estado:any)
   {
     this.getDataFiltrado();
-  
   }
   
 
   getVendedores() {
-    
     this.loadingVendedores = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetVendedoresCotizacion", null).subscribe(response => {
@@ -258,10 +225,7 @@ export class FacturaListadoComponent implements OnInit {
           {
             this.vendedores = response.records;
            this.vendedor=response.records[0].codigo;
-          
-           
           }
-          
         }
         this.loadingVendedores = false;
       }, error => {
@@ -271,7 +235,6 @@ export class FacturaListadoComponent implements OnInit {
   }
 
   getEstadoERP() {
-    
     this.loadingEstadosERP = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetEstadosERP", null).subscribe(response => {
@@ -281,9 +244,7 @@ export class FacturaListadoComponent implements OnInit {
           if(response.records.length > 0){
             this.estadoERPs = response.records;
             this.estadoERPID=(Number(response.records[0].codigo));
-          
           }
-         
         }
         this.loadingEstadosERP = false;
       }, error => {

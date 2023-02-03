@@ -184,6 +184,7 @@ export class DespachoListadoComponent implements OnInit {
     await  this.getCanales();
     await  this.getAlmacenes();
   }
+  
 
   startPingingBalanza() {
   setTimeout(() => {
@@ -734,15 +735,10 @@ getSucursalByUsuarioId() {
     return (Math.floor(Math.random() * (max - min + 1)) + min)
   }
 
-
-
-
-
   async getCanales() {
     this.loadingCanales = true;
    await this.httpService.DoPostAsync<ComboBox>(DataApi.ComboBox,
       "GetCanales", null).then(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -759,19 +755,12 @@ getSucursalByUsuarioId() {
 
       });
   }
-
-
-
-
-
- 
-
   onChangeFechaDesdeFiltro(evento: any) {
     if(++this.primeraVez==1){return;}
     this.fecha = new Date(evento.value)
     this.getDataByCondicional()
   }
-  // CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA
+  // CANAL PREVENTA  
 
   getDataPreventa(showLoading=true) {
 
@@ -780,12 +769,9 @@ getSucursalByUsuarioId() {
      }
      if(showLoading){
       this.Cargando = true;
-
      }else{
       this.CargandoRealtime =true;
      }
-     
-
      let parametros: Parametro[] = [
       { key: "Search", value: this.Search },
       {  key: "UsuarioId",value:Number(this.authService.tokenDecoded.nameid)},
@@ -793,15 +779,13 @@ getSucursalByUsuarioId() {
       { key: "Fecha", value: formatDate(this.fecha,'yyyy-MM-dd', 'en-US')  },
      ]
 
-
-
     this.httpService.GetAllWithPagination<DespachoListadoPreventaVM>(DataApi.Despacho,
        "GetDespachoPreventaListado", "FechaEntrega", this.paginaNumeroActual,
       this.paginaSize,true, parametros).subscribe(x => {
         if (x.ok) {
 
           this.dataPreventa = x.valores[0];
-          console.log(x.valores[0])
+          //console.log(x.valores[0])
           this.dataPreventaTotales= x.valores[1];
           this.asignarPagination(x);
         } else {
@@ -825,9 +809,6 @@ getSucursalByUsuarioId() {
       });
 
   }
-
-
-
   getDespachoPreventaDetalleFromAPi(fecha:string,rutaId:number) {
     this.limpiarDataPreventa()
     this.loadingDespachoPreventaDetalle = true;
@@ -836,8 +817,6 @@ getSucursalByUsuarioId() {
      "Fecha":fecha
     ,"RutaId": rutaId
    }
-
-
     this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
       "GetDespachoPreventaDetalles", parametros).subscribe(response => {
         if (!response.ok) {
@@ -863,16 +842,10 @@ getSucursalByUsuarioId() {
   }
 
   formatDespachoPreventaDetalles() {
-
-
     if(this.despachoPreventaDetalles.length>0){
 
        this.despachoPreventaDetalles.sort((a, b) => a.estadoId - b.estadoId);
-
-
       this.despachoPreventaDetalles.filter(x=>x.codigoArticulo=='600124').map(x=>x.unidadMedida='CANASTO')
-
-
       this.despachoPreventaDetalles[0].selected=true;
       this.despachoPreventaArticuloDetalleSelected=this.despachoPreventaDetalles[0];
       if (!this.existeArticuloPendienteDespachar()) {return;}

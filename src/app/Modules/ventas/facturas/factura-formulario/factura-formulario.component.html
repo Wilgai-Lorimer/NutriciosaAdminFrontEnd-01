@@ -4,14 +4,11 @@
         </div>
     </div>
 </div>
-
 <div class="row mb-2">
     <div class="col">
         <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
     </div>
 </div>
-
-
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -23,58 +20,55 @@
                     <div class="col-md-6 col-lg-6 col-12 text-right">
                     </div>
                 </div>
-             
-
-                <div class="col-12">
+                <div *ngIf="actualizando" class="col-12">
                     <div class="row">
-                        <div class="form-group col-md-5 ">
-                            <button class="btn btn-info m-1"  type="button">
+                        <div  class="form-group col-md-5 ">
+                            <button *ngIf="!factura.enviado" (click)="enviar()" class="btn btn-info m-1"  type="button">
                                 Enviar <i class="fas fa-paper-plane"></i> 
                             </button>
-                            <button  class="btn btn-info m-1" type="button" >
+                            <button *ngIf="factura.enviado" (click)="enviar()" class="btn btn-info m-1"  type="button">
+                                Re-enviar <i class="fas fa-paper-plane"></i> 
+                            </button>
+                            <button (click)="imprimir()"  class="btn btn-info m-1" type="button" >
                                 <i class="fas fa-print"></i>  Imprimir
                             </button>
-                            <button class="btn btn-info m-1"  type="button">
-                                <i class="fas fa-check"></i>  Confirmar
+                            <button *ngIf="!factura.aprobado" (click)="aprobar()" class="btn btn-info m-1"  type="button">
+                                <i class="fas fa-check"></i>  Aprobar
                             </button>
-                            <button class="btn btn-info m-1"  type="button">
+                            <button *ngIf="!factura.pagado"  class="btn btn-info m-1"  type="button">
                                 <i class="fas fa-times"></i>  Cancelar
                             </button>
-                            <button class="btn btn-info m-1"  type="button">
+                            <button *ngIf="!factura.pagado && factura.aprobado" (click)="pagar()" class="btn btn-info m-1"  type="button">
                                 Pagar <i class="fas fa-money-bille"></i> 
                             </button>
-                        
                         </div>
                         <div class="form-group col-md-2 ">
-                           
                         </div>
                         <div class="form-group col-md-5 ">
                             <div class="arrow-steps clearfix">
-                                <div [ngClass]="{'current done' : estadoFactura.borrador}" class="step "> <span>Borrador</span> </div>
-                                <div [ngClass]="{'current done' : estadoFactura.enviado}" class="step "> <span>Enviado</span> </div>
-                                <div [ngClass]="{'current done' : estadoFactura.confirmado}" class="step"> <span>Confirmado</span> </div>
-                                <div [ngClass]="{'current done' : estadoFactura.pagado}" class="step "> <span>Pagado</span> </div>
-                                <div [ngClass]="{'current done' : estadoFactura.entregado}" class="step"> <span>Entregado</span> </div>
+                                <div  class=" current done step "> <span>Borrador</span> </div>
+                                <div [ngClass]="{'current done' : factura.enviado}" class="step "> <span>Enviado</span> </div>
+                                <div [ngClass]="{'current done' : factura.aprobado}" class="step"> <span>Aprobado</span> </div>
+                                <div [ngClass]="{'current done' : factura.pagado}" class="step "> <span>Pagado</span> </div>
+                                <div [ngClass]="{'current done' : factura.entregado}" class="step"> <span>Entregado</span> </div>
                               </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-row m-t-40">
-
                     <div class="col-12">
                         <div class="row">
                             <div class="form-group col-md-4 ">
-                            
                             </div>
                             <div class="form-group col-md-4 ">
                                 <label> <i class="fa fa-calendar"></i> Fecha de entrega</label>
                                 <ejs-datepicker [ngModelOptions]="{standalone: true}"
-                                    [(ngModel)]="cotizacion.fechaEntrega" [format]="'dd-MM-yyyy'"
+                                    [(ngModel)]="factura.fechaEntrega" [format]="'dd-MM-yyyy'"
                                     [showClearButton]="false"></ejs-datepicker>
                             </div>
                             <div class="form-group col-md-4 ">
                                 <label>Terminos</label>
-                                <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.plazoId"
+                                <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="factura.plazoId"
                                 bindLabel="nombre" bindValue="codigo" [items]="terminos" [loading]="loadingTerminos"
                                 [clearable]="false" 
                                 notFoundText="No resultados">
@@ -84,7 +78,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label for="inputEmail4">Cliente</label>
-                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.clienteId"
+                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="factura.clienteId"
                             bindLabel="nombre" bindValue="codigo" [items]="clientes" [loading]="loadingClientes"
                             placeholder="Seleccione un cliente"
                             (keyup)="buscaMasCliente($event)"
@@ -94,7 +88,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label for="inputEmail4">Almacén</label>
-                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.almacenId"
+                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="factura.almacenId"
                             bindLabel="nombre" bindValue="codigo" [items]="almacenesDestino" [loading]="loadingClientes"
                             placeholder="Seleccione un almacén"
                             [clearable]="false" 
@@ -104,7 +98,7 @@
                     <div class="form-group col-md-12" *ngIf="cliente">
                         <label for="nombre"> Dirección</label>
                         <input disabled="true" type="text" name="nombre" id="nombre"
-                        [(ngModel)]="cotizacion.direccion"
+                        [(ngModel)]="factura.direccion"
                             [ngClass]="{ 'form-control':true  }">
                     </div>
                     <hr>
@@ -130,7 +124,7 @@
                     <div class="form-group col-md-6">
                         <label for="inputEmail4">Vendedor</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="vendedores"
-                            [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.vendedorId"
+                            [ngModelOptions]="{standalone: true}" [(ngModel)]="factura.vendedorId"
                             placeholder="Seleccione un vendedor"
                             [loading]="loadingVendedores" [clearable]="false" notFoundText="No resultados">
                         </ng-select>
@@ -138,7 +132,7 @@
                     <div class="form-group col-md-6">
                         <label for="inputEmail4">Moneda</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedaTipos"
-                            [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.monedaId"
+                            [ngModelOptions]="{standalone: true}" [(ngModel)]="factura.monedaId"
                             [loading]="loadingMonedaTipos" [clearable]="false" notFoundText="No resultados">
                         </ng-select>
                     </div>
@@ -146,24 +140,24 @@
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Artículo</th>
-                                    <th></th>
-                                    <th>Precio</th>
-                                    <th>Inventario</th>
-                                    <th>Cant.</th>
-                                    <th>% Desc.</th>
-                                    <th>SubTotal</th>
-                                    <th>Desc.</th>
-                                    <th>ITBIS</th>
-                                    <th>Total Neto</th>
-                                    <th></th>
+                                    <th width="30%">Artículo</th>
+                                    <th width="1%"></th>
+                                    <th width="10%">Precio</th>
+                                    <th width="5%">Inventario</th>
+                                    <th width="5%">Cant.</th>
+                                    <th width="5%">% Desc.</th>
+                                    <th width="10%">SubTotal</th>
+                                    <th width="10%">Desc.</th>
+                                    <th width="10%">ITBIS</th>
+                                    <th width="10%">Total Neto</th>
+                                    <th width="2%"></th>
                                 </tr>
                             </thead>
                             <!-- <div>
-                                
+                
                             </div> -->
                             <tbody>
-                                <tr *ngFor="let item of cotizacionDetalles; let i=index">
+                                <tr *ngFor="let item of facturaDetalles; let i=index">
                                     <td>
                                         <button *ngIf="((item.articuloId && (item.porcientoDescuento > item.porcientoDescuentoBase )) && autorizarDescuento) && !item.descuentoAutorizado" 
                                             title="Autorizar" 
@@ -175,7 +169,7 @@
                                          </button>
                                     </td>
                                     <td>
-                                        <ng-select style="width: 700px;" [items]="articulosCombobox" bindLabel="nombreYCodigoReferencia"
+                                        <ng-select  [items]="articulosCombobox" bindLabel="nombreYCodigoReferencia"
                                             [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosCombobox"
                                             [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
                                             (change)="onSelectArticulo($event,i)" notFoundText="No resultados"
@@ -189,24 +183,24 @@
                                         </button>
                                     </td>
                                     <td>
-                                        <input style="width: 150px;" type="text" class="form-control" prefix="$ "
+                                        <input  type="text" class="form-control" prefix="$ "
                                             [(ngModel)]="item.precio" [ngModelOptions]="{standalone: true}"
                                             [readonly]="'true'" mask="separator" thousandSeparator=",">
                                     </td>
                                     <td>
-                                        <input style="width: 150px;" type="text" class="form-control" 
+                                        <input  type="text" class="form-control" 
                                         [(ngModel)]="item.inventario" [ngModelOptions]="{standalone: true}"
                                         [readonly]="'true'" mask="separator" thousandSeparator=",">
                                     </td>
                                     <td>
-                                        <input style="width: 70px;" type="number" class="form-control"
+                                        <input  type="number" class="form-control"
                                             [readonly]="!item.articuloId" (keyup)="calcularTotales(item)"
                                             (blur)="obtenerDescuento(item,i)"
                                             [ngClass]="{'border-danger p-0' : item.hayErroresCantidad }"
                                             [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
                                     </td>
                                     <td>
-                                       <input style="width: 50px;" type="number" class="form-control"
+                                       <input  type="number" class="form-control"
                                             [readonly]="noAplicaDescuento ||!item.articuloId"  (keyup)="validarDescuento(i)"
                                             [ngClass]="{' border-danger p-0' : item.hayErroresPorcientoDescuento }"
                                             [(ngModel)]="item.porcientoDescuento" [ngModelOptions]="{standalone: true}">
@@ -224,7 +218,7 @@
                                         <span>${{ item.totalNeto | number:'1.2-2'}}</span>
                                     </td>
                                     <td>
-                                        <button (click)="onDeleteitem(i)" type="button"
+                                        <button (click)="onDeleteitem(i,item)" type="button"
                                             class="btn btn-sm btn-outline-danger">
                                             <i class="fa fa-times"></i>
                                         </button>
@@ -234,10 +228,10 @@
                         </table>
                     <div class="form-group text-right col-md-12" *ngIf="cliente">
                         <hr>
-                        <h4>Subtotal: $ {{cotizacion.subtotal | number:'1.2-2' }}</h4>
-                        <h4>Descuento: $ {{cotizacion.descuentoTotal | number:'1.2-2' }}</h4>
-                        <h4>Impuesto: $ {{cotizacion.impuestoTotal | number:'1.2-2' }}</h4>
-                        <h4 class="font-weight-bold">Total Neto: $ {{cotizacion.totalNeto | number:'1.2-2' }}</h4>
+                        <h4>Subtotal: $ {{factura.subtotal | number:'1.2-2' }}</h4>
+                        <h4>Descuento: $ {{factura.descuentoTotal | number:'1.2-2' }}</h4>
+                        <h4>Impuesto: $ {{factura.impuestoTotal | number:'1.2-2' }}</h4>
+                        <h4 class="font-weight-bold">Total Neto: $ {{factura.totalNeto | number:'1.2-2' }}</h4>
                     </div>
                     <div class="form-group text-right col-md-12" *ngIf="cliente">
                         <hr />
