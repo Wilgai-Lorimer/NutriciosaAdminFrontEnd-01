@@ -27,6 +27,7 @@ export class Cotizacion {
         this.clientePlazo = 0;
         this.companiaId=0;
         this.estadoERPID = 1;
+        this.convertidoAFactura=false;
     }
 
     id = 0;
@@ -55,5 +56,6 @@ export class Cotizacion {
     estadoDespachoID = 0;
     clientePlazo = 0;
     companiaId:number;
+    convertidoAFactura=false;
 
 }

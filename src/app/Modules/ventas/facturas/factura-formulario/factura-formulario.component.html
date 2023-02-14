@@ -218,7 +218,7 @@
                                         <span>${{ item.totalNeto | number:'1.2-2'}}</span>
                                     </td>
                                     <td>
-                                        <button (click)="onDeleteitem(i,item)" type="button"
+                                        <button *ngIf="!factura.pagado" (click)="onDeleteitem(i,item)" type="button"
                                             class="btn btn-sm btn-outline-danger">
                                             <i class="fa fa-times"></i>
                                         </button>
@@ -238,7 +238,7 @@
                         <button class="btn btn-light m-1" routerLink="../" type="button">
                             <i class="fas fa-times"></i> Cancelar
                         </button>
-                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
+                        <button [disabled]="actualizando && factura.pagado " *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
                             <i class="fas fa-check"></i> Guardar
                         </button>
                         <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">

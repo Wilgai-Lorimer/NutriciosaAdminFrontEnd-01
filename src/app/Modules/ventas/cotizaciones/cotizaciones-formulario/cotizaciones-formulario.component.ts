@@ -270,11 +270,13 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.cotizacion.condicionPagoId = this.cliente.condicionPagoId;
     this.cotizacion.companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
     this.cotizacion.listaPrecioID = this.cliente.listaPrecioId;
+    
+    // console.log(this.cotizacion);
     let parametro: any = {
       "Cotizacion": this.cotizacion,
       "CotizacionDetalles": this.cotizacionDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
     }
-    console.log(parametro)
+    // console.log(parametro)
     this.btnGuardarCargando = true;
     this.httpService.DoPostAny<any>(DataApi.Cotizacion,
       metodo, parametro).subscribe(response => {
@@ -767,6 +769,37 @@ export class CotizacionesFormularioComponent implements OnInit {
   }
   imprimir(){
     this.imprimirCotizacion.construirFactura(this.cotizacion,this.cotizacionDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0),this.compania)
+  }
+  convertirAFactura(){
+    let metodo: string =  "Registrar";
+    this.cotizacion.sucursalId = Number(this.authService.tokenDecoded.groupsid)
+    this.cotizacion.usuarioId = Number(this.authService.tokenDecoded.nameid)
+    this.cotizacion.condicionPagoId = this.cliente.condicionPagoId;
+    this.cotizacion.companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
+    this.cotizacion.listaPrecioID = this.cliente.listaPrecioId;
+    this.cotizacion.plazoId=1;
+    let parametro: any = {
+      "Factura": this.cotizacion,
+      "FacturaDetalles": this.cotizacionDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0),
+    }
+    console.log(parametro)
+    this.btnGuardarCargando = true;
+    this.httpService.DoPostAny<any>(DataApi.Factura,
+      metodo, parametro).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.cotizacion.convertidoAFactura=true;
+          this.guardar();
+          this.router.navigateByUrl('/ventas/cotizacion');
+        }
+        this.btnGuardarCargando = false;
+      }, error => {
+        this.btnGuardarCargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
   }
 }
 
